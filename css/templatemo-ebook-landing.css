@@ -149,6 +149,7 @@ strong {
   border-radius: 50%;
   outline: none;
   cursor: pointer;
+  z-index: 1000;
 }
 .chatbot__button span {
   position: absolute;
@@ -173,6 +174,7 @@ strong {
   overflow: hidden;
   opacity: 0;
   pointer-events: none;
+  z-index: 1000;
 }
 .show-chatbot .chatbot {
   opacity: 1;
