@@ -557,5 +557,68 @@ https://templatemo.com/tm-588-ebook-landing
         <script src="js/click-scroll.js"></script>
         <script src="js/custom.js"></script>
         <script src="js/chatbot.js"></script>
+        <script type="importmap">
+            {
+              "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+              }
+            }
+        </script>
+        <script type="module">
+            import { GoogleGenerativeAI } from "@google/generative-ai";
+            const genAI = new GoogleGenerativeAI("AIzaSyDOf0NoumfYp7JH53zpsl6TtDgg-E-j3nY");
+
+            async function run(incomingChatLi, userMessage) {
+                const messageElement = incomingChatLi.querySelector('p');
+                const chatBox = document.querySelector('.chatbot__box');
+                const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+                
+                const prompt = userMessage;
+                
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+                
+                if (response && response.text) {
+                    // console.log(response);
+                    messageElement.textContent = text;
+                } else {
+                    messageElement.classList.add('error');
+                    messageElement.textContent = 'Oops! Intenta de nuevo!';
+                    // console.log(error);
+                }
+                chatBox.scrollTo(0, chatBox.scrollHeight);
+
+            }
+
+            const sendChatBtn = document.querySelector('.chatbot__input-box span');
+
+            const handleChat = () => {
+                userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+                chatInput.value = '';
+                chatInput.style.height = `${inputInitHeight}px`;
+
+                chatBox.appendChild(createChatLi(userMessage, 'outgoing'));
+                chatBox.scrollTo(0, chatBox.scrollHeight);
+
+                setTimeout(() => {
+                    const incomingChatLi = createChatLi('Thinking...', 'incoming');
+                    chatBox.appendChild(incomingChatLi);
+                    chatBox.scrollTo(0, chatBox.scrollHeight);
+                    run(incomingChatLi, userMessage);
+                }, 600);
+            };
+
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 800) {
+                    e.preventDefault();
+                    handleChat();
+                }
+            });
+
+            sendChatBtn.addEventListener('click', handleChat);
+        </script>
+
     </body>
 </html>
