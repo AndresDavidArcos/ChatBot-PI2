@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 const chatbotToggle = document.querySelector('.chatbot__button');
 const sendChatBtn = document.querySelector('.chatbot__input-box span');
 const chatInput = document.querySelector('.chatbot__textarea');
@@ -5,9 +6,10 @@ const chatBox = document.querySelector('.chatbot__box');
 const chatbotCloseBtn = document.querySelector('.chatbot__header span');
 
 let userMessage;
-// Need GPT key
+// Need gemini key
+const genAI = new GoogleGenerativeAI("AIzaSyDOf0NoumfYp7JH53zpsl6TtDgg-E-j3nY");
+
 const inputInitHeight = chatInput.scrollHeight;
-const API_KEY = 'HERE';
 
 const createChatLi = (message, className) => {
     const chatLi = document.createElement('li');
@@ -20,9 +22,54 @@ const createChatLi = (message, className) => {
     chatLi.querySelector('p').textContent = message;
     return chatLi;
 };
+
+async function generateResponse(incomingChatLi, userMessage) {
+    const messageElement = incomingChatLi.querySelector('p');
+    const chatBox = document.querySelector('.chatbot__box');
+    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+    
+    const prompt = userMessage;
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    if (response && response.text) {
+        // console.log(response);
+        messageElement.textContent = text;
+    } else {
+        messageElement.classList.add('error');
+        messageElement.textContent = 'Oops! Intenta de nuevo!';
+        // console.log(error);
+    }
+    chatBox.scrollTo(0, chatBox.scrollHeight);
+}
+
+const handleChat = () => {
+    userMessage = chatInput.value.trim();
+    if (!userMessage) return;
+    chatInput.value = '';
+    chatInput.style.height = `${inputInitHeight}px`;
+
+    chatBox.appendChild(createChatLi(userMessage, 'outgoing'));
+    chatBox.scrollTo(0, chatBox.scrollHeight);
+
+    setTimeout(() => {
+        const incomingChatLi = createChatLi('Thinking...', 'incoming');
+        chatBox.appendChild(incomingChatLi);
+        chatBox.scrollTo(0, chatBox.scrollHeight);
+        generateResponse(incomingChatLi, userMessage);
+    }, 600);
+};
 chatInput.addEventListener('input', () => {
     chatInput.style.height = `${inputInitHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
+});
+chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 800) {
+        e.preventDefault();
+        handleChat();
+    }
 });
 chatbotToggle.addEventListener('click', () =>
     document.body.classList.toggle('show-chatbot')
@@ -30,3 +77,4 @@ chatbotToggle.addEventListener('click', () =>
 chatbotCloseBtn.addEventListener('click', () =>
     document.body.classList.remove('show-chatbot')
 );
+sendChatBtn.addEventListener('click', handleChat);
