@@ -25,12 +25,25 @@ const createChatLi = (message, className) => {
 
 async function generateResponse(incomingChatLi, userMessage) {
     const messageElement = incomingChatLi.querySelector('p');
-    const chatBox = document.querySelector('.chatbot__box');
     const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-    
-    const prompt = userMessage;
-    
-    const result = await model.generateContent(prompt);
+
+    const chat = model.startChat({
+        history: [
+          {
+            role: "user",
+            parts: "Hello, I have 2 dogs in my house.",
+          },
+          {
+            role: "model",
+            parts: "Great to meet you. What would you like to know?",
+          },
+        ],
+        generationConfig: {
+          maxOutputTokens: 100,
+        },
+      });
+
+    const result = await chat.sendMessage(userMessage);
     const response = await result.response;
     const text = response.text();
     
