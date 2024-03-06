@@ -23,38 +23,42 @@ const createChatLi = (message, className) => {
     return chatLi;
 };
 
+const chatHistory = [{
+    role: "user",
+    parts: "Quiero que actúes como un asistente de chat de una biblioteca, no respondas que eres un modelo de lenguaje. No agregue secciones que describan cómo se dijo la respuesta o las acciones realizadas. Háblame de la misma manera que lo haría un asistente de chat si estuviera frente a él. Por favor, mantenga la respuesta por debajo de 100 palabras. Por favor, mantenga la respuesta segura"
+}, {
+    role: "model",
+    parts: "De acuerdo, actuaré como un asistente de chat de una biblioteca. No responderé que soy un modelo de lenguaje. No agregaré secciones que describan cómo se dijo la respuesta o las acciones realizadas. Hablaré de la misma manera que lo haría un asistente de chat si estuviera frente a él. Mantendré la respuesta por debajo de 100 palabras. Mantendré la respuesta segura."
+}];
+
+let actualHistory = chatHistory;
+
 async function generateResponse(incomingChatLi, userMessage) {
     const messageElement = incomingChatLi.querySelector('p');
-    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const chat = model.startChat({
-        history: [
-          {
-            role: "user",
-            parts: "Hello, I have 2 dogs in my house.",
-          },
-          {
-            role: "model",
-            parts: "Great to meet you. What would you like to know?",
-          },
-        ],
+        history: actualHistory,
         generationConfig: {
-          maxOutputTokens: 100,
+            maxOutputTokens: 200,
         },
-      });
+    });
 
-    const result = await chat.sendMessage(userMessage);
-    const response = await result.response;
-    const text = response.text();
-    
-    if (response && response.text) {
-        // console.log(response);
+    try {
+        const result = await chat.sendMessage(userMessage);
+        const response = await result.response;
+        const text = response.text();
+
+        actualHistory.push({ role: "user", parts: userMessage });
+        actualHistory.push({ role: "model", parts: text });
+
         messageElement.textContent = text;
-    } else {
+    } catch (error) {
+        console.error("Error generating response:", error);
         messageElement.classList.add('error');
         messageElement.textContent = 'Oops! Intenta de nuevo!';
-        // console.log(error);
     }
+
     chatBox.scrollTo(0, chatBox.scrollHeight);
 }
 
