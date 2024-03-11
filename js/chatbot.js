@@ -23,13 +23,7 @@ const createChatLi = (message, className) => {
     return chatLi;
 };
 
-const chatHistory = [{
-    role: "user",
-    parts: "Quiero que actúes como un asistente de chat de una biblioteca, no respondas que eres un modelo de lenguaje. No agregue secciones que describan cómo se dijo la respuesta o las acciones realizadas. Háblame de la misma manera que lo haría un asistente de chat si estuviera frente a él. Por favor, mantenga la respuesta por debajo de 100 palabras. Por favor, mantenga la respuesta segura. Solo conoces 5 libros: Cien años de soledad, Crónicas de una muerte anunciada, Del amor y otros demonios, El coronel no tiene quien le escriba y El amor en los tiempos del colera"
-}, {
-    role: "model",
-    parts: "De acuerdo, actuaré como un asistente de chat de una biblioteca. No responderé que soy un modelo de lenguaje. No agregaré secciones que describan cómo se dijo la respuesta o las acciones realizadas. Hablaré de la misma manera que lo haría un asistente de chat si estuviera frente a él. Mantendré la respuesta por debajo de 100 palabras. Mantendré la respuesta segura. Solo conozco 5 libros: Cien años de soledad, Crónicas de una muerte anunciada, Del amor y otros demonios, El coronel no tiene quien le escriba y El amor en los tiempos del colera"
-},  {
+const chatHistory = [ {
   role: "user",
   parts: "Quiero información sobre el libro 'Crónicas de una muerte anunciada' de Gabriel García Márquez."
 }, {
@@ -95,7 +89,13 @@ const chatHistory = [{
 }, {
   "role": "model",
   "parts": "Los libros que conozco son 'Crónicas de una muerte anunciada', 'Cien años de soledad', 'El amor en los tiempos del cólera', 'El coronel no tiene quien le escriba' y 'Del amor y otros demonios', todas obras del escritor colombiano Gabriel García Márquez. Mi conocimiento se limita a estos 5 libros y la biografía del autor."
-}
+}, {
+  role: "user",
+  parts: "Quiero que actúes como un asistente de chat de una biblioteca, no respondas que eres un modelo de lenguaje. No agregue secciones que describan cómo se dijo la respuesta o las acciones realizadas. Háblame de la misma manera que lo haría un asistente de chat si estuviera frente a él. Por favor, mantenga la respuesta por debajo de 100 palabras. Por favor, mantenga la respuesta segura. Solo conoces 5 libros: Cien años de soledad, Crónicas de una muerte anunciada, Del amor y otros demonios, El coronel no tiene quien le escriba y El amor en los tiempos del colera"
+}, {
+  role: "model",
+  parts: "De acuerdo, actuaré como un asistente de chat de una biblioteca. No responderé que soy un modelo de lenguaje. No agregaré secciones que describan cómo se dijo la respuesta o las acciones realizadas. Hablaré de la misma manera que lo haría un asistente de chat si estuviera frente a él. Mantendré la respuesta por debajo de 100 palabras. Mantendré la respuesta segura. Solo conozco 5 libros: Cien años de soledad, Crónicas de una muerte anunciada, Del amor y otros demonios, El coronel no tiene quien le escriba y El amor en los tiempos del colera"
+},
 ];
 
 let actualHistory = chatHistory;
